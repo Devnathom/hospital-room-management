@@ -33,24 +33,23 @@ export function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // If logged in and visiting auth pages, redirect to dashboard
+  const token = request.cookies.get("auth-token")?.value;
+  if (token && pathname.startsWith("/auth/")) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
+
   // Allow public paths
   if (publicPaths.some((p) => pathname === p || pathname.startsWith("/api/public"))) {
     return NextResponse.next();
   }
 
   // Check cookie presence only (JWT verification done in route handlers via Node.js runtime)
-  const token = request.cookies.get("auth-token")?.value;
-
   if (!token) {
     if (pathname.startsWith("/api/")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     return NextResponse.redirect(new URL("/auth/signin", request.url));
-  }
-
-  // If logged in and visiting auth pages, redirect to dashboard
-  if (pathname.startsWith("/auth/")) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   return NextResponse.next();
