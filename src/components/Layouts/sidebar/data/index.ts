@@ -1,104 +1,84 @@
 import * as Icons from "../icons";
 
+export type UserRole = "super_admin" | "school_admin" | "staff" | "nurse";
+
 export const NAV_DATA = [
   {
-    label: "MAIN MENU",
+    label: "เมนูหลัก",
+    roles: ["super_admin", "school_admin", "staff", "nurse"] as UserRole[],
     items: [
       {
-        title: "Dashboard",
+        title: "แดชบอร์ด",
+        url: "/dashboard",
         icon: Icons.HomeIcon,
-        items: [
-          {
-            title: "eCommerce",
-            url: "/",
-          },
-        ],
-      },
-      {
-        title: "Calendar",
-        url: "/calendar",
-        icon: Icons.Calendar,
+        roles: ["super_admin", "school_admin"] as UserRole[],
         items: [],
       },
       {
-        title: "Profile",
-        url: "/profile",
-        icon: Icons.User,
-        items: [],
-      },
-      {
-        title: "Forms",
-        icon: Icons.Alphabet,
-        items: [
-          {
-            title: "Form Elements",
-            url: "/forms/form-elements",
-          },
-          {
-            title: "Form Layout",
-            url: "/forms/form-layout",
-          },
-        ],
-      },
-      {
-        title: "Tables",
-        url: "/tables",
+        title: "ห้องพยาบาล",
         icon: Icons.Table,
+        roles: ["school_admin", "staff", "nurse"] as UserRole[],
         items: [
-          {
-            title: "Tables",
-            url: "/tables",
-          },
+          { title: "รายการห้อง", url: "/dashboard/rooms" },
+          { title: "บันทึกการใช้ห้อง", url: "/dashboard/visits" },
         ],
       },
       {
-        title: "Pages",
+        title: "การรักษา",
         icon: Icons.Alphabet,
+        roles: ["school_admin", "staff", "nurse"] as UserRole[],
         items: [
-          {
-            title: "Settings",
-            url: "/pages/settings",
-          },
+          { title: "บันทึกการรักษา", url: "/dashboard/treatments" },
+        ],
+      },
+      {
+        title: "นักเรียน",
+        url: "/dashboard/students",
+        icon: Icons.User,
+        roles: ["school_admin", "staff", "nurse"] as UserRole[],
+        items: [],
+      },
+    ],
+  },
+  {
+    label: "รายงาน",
+    roles: ["school_admin", "staff", "nurse"] as UserRole[],
+    items: [
+      {
+        title: "สถิติ",
+        icon: Icons.PieChart,
+        roles: ["school_admin", "staff", "nurse"] as UserRole[],
+        items: [
+          { title: "ภาพรวม", url: "/dashboard/stats" },
+          { title: "ส่งออกรายงาน", url: "/dashboard/reports" },
         ],
       },
     ],
   },
   {
-    label: "OTHERS",
+    label: "จัดการระบบ",
+    roles: ["super_admin", "school_admin"] as UserRole[],
     items: [
       {
-        title: "Charts",
-        icon: Icons.PieChart,
-        items: [
-          {
-            title: "Basic Chart",
-            url: "/charts/basic-chart",
-          },
-        ],
+        title: "จัดการผู้ใช้",
+        url: "/dashboard/users",
+        icon: Icons.User,
+        roles: ["super_admin", "school_admin"] as UserRole[],
+        items: [],
       },
       {
-        title: "UI Elements",
+        title: "จัดการโรงเรียน",
+        url: "/dashboard/schools",
         icon: Icons.FourCircle,
-        items: [
-          {
-            title: "Alerts",
-            url: "/ui-elements/alerts",
-          },
-          {
-            title: "Buttons",
-            url: "/ui-elements/buttons",
-          },
-        ],
+        roles: ["super_admin"] as UserRole[],
+        items: [],
       },
       {
-        title: "Authentication",
-        icon: Icons.Authentication,
-        items: [
-          {
-            title: "Sign In",
-            url: "/auth/sign-in",
-          },
-        ],
+        title: "ประเภทอาการ",
+        url: "/dashboard/symptoms",
+        icon: Icons.Calendar,
+        roles: ["school_admin"] as UserRole[],
+        items: [],
       },
     ],
   },

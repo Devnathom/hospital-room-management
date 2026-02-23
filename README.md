@@ -1,89 +1,193 @@
-# NextAdmin - Next.js Admin Dashboard Template and Components
+# ระบบห้องพยาบาลโรงเรียน (Hospital Room Management System)
 
-**NextAdmin** is a Free, open-source Next.js admin dashboard toolkit featuring 200+ UI components and templates that come with pre-built elements, components, pages, high-quality design, integrations, and much more to help you create powerful admin dashboards with ease.
+ระบบบริหารจัดการห้องพยาบาลโรงเรียน แบบ Multi-Tenant รองรับหลายโรงเรียน ข้อมูลแยกขาดจากกัน 100%
 
+**พัฒนาโดย:** รัชเดช ศรีแก้ว | โทร: 093-073-2896 | Line: jacknewd
 
-[![nextjs admin template](https://cdn.pimjo.com/nextadmin-2.png)](https://nextadmin.co/)
+---
 
-
-**NextAdmin** provides you with a diverse set of dashboard UI components, elements, examples and pages necessary for creating top-notch admin panels or dashboards with **powerful** features and integrations. Whether you are working on a complex web application or a basic website, **NextAdmin** has got you covered.
-
-### [✨ Visit Website](https://nextadmin.co/)
-### [🚀 Live Demo](https://demo.nextadmin.co/)
-### [📖 Docs](https://docs.nextadmin.co/)
-
-By leveraging the latest features of **Next.js 14** and key functionalities like **server-side rendering (SSR)**, **static site generation (SSG)**, and seamless **API route integration**, **NextAdmin** ensures optimal performance. With the added benefits of **React 18 advancements** and **TypeScript** reliability, **NextAdmin** is the ultimate choice to kickstart your **Next.js** project efficiently.
-
-## Installation
-
-1. Download/fork/clone the repo and Once you're in the correct directory, it's time to install all the necessary dependencies. You can do this by typing the following command:
+## System Architecture
 
 ```
+┌──────────────────────────────────────────────────────┐
+│                    Frontend (Next.js)                  │
+│  ┌─────────┐  ┌──────────┐  ┌──────────┐             │
+│  │ Landing  │  │  Auth    │  │Dashboard │             │
+│  │  Page    │  │ Pages    │  │  Pages   │             │
+│  └─────────┘  └──────────┘  └──────────┘             │
+├──────────────────────────────────────────────────────┤
+│              Middleware (JWT Verification)             │
+│         Role-based + School-based Access Control      │
+├──────────────────────────────────────────────────────┤
+│                 API Routes (Next.js)                  │
+│  /api/auth  /api/schools  /api/rooms  /api/visits     │
+│  /api/users /api/students /api/treatments /api/stats  │
+├──────────────────────────────────────────────────────┤
+│                  MySQL Database                       │
+│  schools | users | health_rooms | students            │
+│  room_visits | treatment_records | symptom_categories │
+└──────────────────────────────────────────────────────┘
+```
+
+## เทคโนโลยีที่ใช้
+
+| Layer       | Technology                          |
+|-------------|-------------------------------------|
+| Frontend    | Next.js 16, React 19, TailwindCSS   |
+| Backend     | Next.js API Routes (Full Stack)     |
+| Database    | MySQL (mysql2)                      |
+| Auth        | JWT (jose) + bcryptjs               |
+| Charts      | Recharts                            |
+| PDF Export  | jsPDF + jspdf-autotable             |
+| Icons       | Lucide React                        |
+| UI Base     | NextAdmin Dashboard Template        |
+
+## โครงสร้างผู้ใช้งาน (Roles)
+
+| Role         | สิทธิ์                                              |
+|--------------|------------------------------------------------------|
+| Super Admin  | อนุมัติโรงเรียน, ดูข้อมูลทั้งหมด, เปิด/ปิดระบบ      |
+| School Admin | จัดการข้อมูลโรงเรียน, จัดการผู้ใช้ในโรงเรียน          |
+| Staff/Nurse  | บันทึกการใช้ห้อง, บันทึกการรักษา                      |
+
+## Database Schema
+
+```sql
+-- ตาราง 7 ตาราง ทุกตารางมี school_id (Multi-Tenant)
+schools             -- ข้อมูลโรงเรียน (tenant)
+users               -- ผู้ใช้งาน (role-based)
+health_rooms        -- ห้องพยาบาล
+students            -- นักเรียน
+symptom_categories  -- ประเภทอาการ
+room_visits         -- บันทึกการเข้าใช้ห้อง
+treatment_records   -- ประวัติการรักษา
+```
+
+## API Endpoints
+
+### Authentication
+| Method | Path                        | Description                |
+|--------|-----------------------------|----------------------------|
+| POST   | /api/auth/login             | เข้าสู่ระบบ                  |
+| POST   | /api/auth/logout            | ออกจากระบบ                  |
+| GET    | /api/auth/me                | ข้อมูลผู้ใช้ปัจจุบัน          |
+| POST   | /api/auth/register-school   | สมัครโรงเรียนใหม่            |
+
+### Schools (Super Admin)
+| Method | Path          | Description               |
+|--------|---------------|---------------------------|
+| GET    | /api/schools  | รายชื่อโรงเรียน             |
+| PUT    | /api/schools  | อัปเดตสถานะ (อนุมัติ/ระงับ)  |
+
+### Users
+| Method | Path         | Description          |
+|--------|--------------|----------------------|
+| GET    | /api/users   | รายชื่อผู้ใช้          |
+| POST   | /api/users   | เพิ่มผู้ใช้            |
+| PUT    | /api/users   | แก้ไขผู้ใช้            |
+| DELETE | /api/users   | ลบผู้ใช้              |
+
+### Health Rooms
+| Method | Path         | Description          |
+|--------|--------------|----------------------|
+| GET    | /api/rooms   | รายการห้องพยาบาล      |
+| POST   | /api/rooms   | เพิ่มห้อง             |
+| PUT    | /api/rooms   | แก้ไขห้อง             |
+| DELETE | /api/rooms   | ลบห้อง               |
+
+### Students, Visits, Treatments, Stats
+| Path                     | Description              |
+|--------------------------|--------------------------|
+| /api/students            | จัดการนักเรียน            |
+| /api/visits              | บันทึกการเข้าใช้ห้อง      |
+| /api/treatments          | บันทึกการรักษา            |
+| /api/symptom-categories  | ประเภทอาการ              |
+| /api/stats               | สถิติและรายงาน            |
+
+## Quick Start
+
+### 1. Clone & Install
+```bash
+git clone <repo-url>
+cd hospital-room-management
 npm install
 ```
-If you're using **Yarn** as your package manager, the command will be:
 
-```
-yarn install
+### 2. ตั้งค่า Database
+```bash
+# สร้าง MySQL database และรัน schema
+mysql -u root -p < src/lib/schema.sql
 ```
 
-2. Okay, you're almost there. Now all you need to do is start the development server. If you're using **npm**, the command is:
-
+### 3. ตั้งค่า Environment
+```bash
+cp .env.example .env.local
+# แก้ไขค่าใน .env.local ให้ตรงกับ MySQL ของคุณ
 ```
+
+### 4. รัน Development Server
+```bash
 npm run dev
 ```
-And if you're using **Yarn**, it's:
+
+### 5. เข้าใช้งาน
+- **Landing Page:** http://localhost:3000
+- **Login:** http://localhost:3000/auth/signin
+- **Super Admin:** email: `admin@hospital-room.com` / password: `admin123`
+
+## ฟีเจอร์หลัก
+
+1. **ระบบสมัครใช้งาน** - โรงเรียนสมัครฟรี, รอ Super Admin อนุมัติ
+2. **ระบบ Login** - JWT Authentication, Role-based Access
+3. **จัดการห้องพยาบาล** - เพิ่ม/แก้ไข/ลบห้อง, บันทึกการใช้งาน
+4. **บันทึกการรักษา** - ประวัติการรักษา, ประเภทอาการ, ยาที่ให้
+5. **สถิติและรายงาน** - กราฟ Bar/Line/Pie, ส่งออก PDF
+6. **Multi-Tenant** - ข้อมูลแยกตาม school_id 100%
+7. **Responsive** - รองรับ Desktop/Tablet/Mobile
+
+## UX/UI Flow
 
 ```
-yarn dev
+Landing Page → สมัครใช้งาน → รออนุมัติ → Login → Dashboard
+                                                    ├── ห้องพยาบาล
+                                                    ├── บันทึกการเข้าใช้ห้อง
+                                                    ├── บันทึกการรักษา
+                                                    ├── จัดการนักเรียน
+                                                    ├── สถิติ (กราฟ)
+                                                    ├── ส่งออกรายงาน PDF
+                                                    ├── จัดการผู้ใช้
+                                                    └── จัดการโรงเรียน (Super Admin)
 ```
 
-And voila! You're now ready to start developing. **Happy coding**!
+## ความปลอดภัย
 
-## Highlighted Features
-**200+ Next.js Dashboard Ul Components and Templates** - includes a variety of prebuilt **Ul elements, components, pages, and examples** crafted with a high-quality design.
-Additionally, features seamless **essential integrations and extensive functionalities**.
+- **JWT Token** - ตรวจสอบทุก request ผ่าน middleware
+- **Role-based Access** - Super Admin / School Admin / Staff / Nurse
+- **School Isolation** - ตรวจสอบ school_id ทุก API
+- **Password Hashing** - bcrypt (12 rounds)
+- **HttpOnly Cookie** - ป้องกัน XSS
 
-- A library of over **200** professional dashboard UI components and elements.
-- Five distinctive dashboard variations, catering to diverse use-cases.
-- A comprehensive set of essential dashboard and admin pages.
-- More than **45** **Next.js** files, ready for use.
-- Styling facilitated by **Tailwind CSS** files.
-- A design that resonates premium quality and high aesthetics.
-- A handy UI kit with assets.
-- Over ten web apps complete with examples.
-- Support for both **dark mode** and **light mode**.
-- Essential integrations including - Authentication (**NextAuth**), Database (**Postgres** with **Prisma**), and Search (**Algolia**).
-- Detailed and user-friendly documentation.
-- Customizable plugins and add-ons.
-- **TypeScript** compatibility.
-- Plus, much more!
+## แนวทาง Deploy
 
-All these features and more make **NextAdmin** a robust, well-rounded solution for all your dashboard development needs.
+### Vercel (แนะนำ)
+```bash
+npm run build
+# Deploy ผ่าน Vercel CLI หรือ GitHub Integration
+```
 
-## Update Logs
+### Database
+- ใช้ PlanetScale, AWS RDS, หรือ DigitalOcean Managed MySQL
+- ตั้ง connection string ใน environment variables
 
-### Version 1.2.2 - [December 01, 2025]
-- Updated to Next.js 16
-- Updated dependencies.
+## การขยายระบบในอนาคต
 
-### Version 1.2.1 - [Mar 20, 2025]
-- Fix Peer dependency issues and NextConfig warning.
-- Updated apexcharts and react-apexhcarts to the latest version.
+- เพิ่มระบบแจ้งเตือน (Line Notify / Email)
+- เพิ่มระบบนัดหมายติดตามอาการ
+- เพิ่ม Dashboard สำหรับผู้ปกครอง
+- เพิ่มระบบจัดการยาและเวชภัณฑ์
+- เพิ่ม API สำหรับ Mobile App
+- เพิ่มระบบ Backup ข้อมูลอัตโนมัติ
 
-### Version 1.2.0 - Major Upgrade and UI Improvements - [Jan 27, 2025]
+---
 
-- Upgraded to Next.js v15 and updated dependencies
-- API integration with loading skeleton for tables and charts.
-- Improved code structure for better readability.
-- Rebuilt components like dropdown, sidebar, and all ui-elements using accessibility practices.
-- Using search-params to store dropdown selection and refetch data.
-- Semantic markups, better separation of concerns and more.
-
-### Version 1.1.0
-- Updated Dependencies
-- Removed Unused Integrations
-- Optimized App
-
-### Version 1.0
-- Initial Release - [May 13, 2024]
+© 2025 ระบบห้องพยาบาลโรงเรียน — พัฒนาโดย **รัชเดช ศรีแก้ว**

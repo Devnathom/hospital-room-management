@@ -1,27 +1,15 @@
-import darkLogo from "@/assets/logos/dark.svg";
-import logo from "@/assets/logos/main.svg";
-import Image from "next/image";
+import { Heart } from "lucide-react";
 
 export function Logo() {
   return (
-    <div className="relative h-8 max-w-[10.847rem]">
-      <Image
-        src={logo}
-        fill
-        className="dark:hidden"
-        alt="NextAdmin logo"
-        role="presentation"
-        quality={100}
-      />
-
-      <Image
-        src={darkLogo}
-        fill
-        className="hidden dark:block"
-        alt="NextAdmin logo"
-        role="presentation"
-        quality={100}
-      />
+    <div className="flex items-center gap-2.5">
+      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600">
+        <Heart className="h-5 w-5 text-white" />
+      </div>
+      <div>
+        <p className="text-sm font-bold leading-tight text-dark dark:text-white">ห้องพยาบาล</p>
+        <p className="text-[10px] leading-tight text-gray-500">Hospital Room</p>
+      </div>
     </div>
   );
 }
