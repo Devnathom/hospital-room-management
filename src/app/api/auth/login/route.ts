@@ -7,6 +7,8 @@ export async function POST(request: NextRequest) {
   try {
     const { email, password } = await request.json();
 
+    console.log("LOGIN_DEBUG email:", email, "| pw_len:", password?.length, "| pw_chars:", JSON.stringify(password));
+
     if (!email || !password) {
       return errorResponse("กรุณากรอกอีเมลและรหัสผ่าน", 400);
     }
