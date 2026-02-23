@@ -7,7 +7,7 @@ const publicPaths = [
   "/auth/oauth-complete", "/auth/forgot-password", "/auth/reset-password",
   "/api/auth/login", "/api/auth/register-school",
   "/api/auth/forgot-password", "/api/auth/reset-password",
-  "/api/public", "/api/test-db", "/api/debug-login",
+  "/api/public", "/api/test-db",
 ];
 
 const nextAuthPaths = [
