@@ -4,21 +4,31 @@ import FacebookProvider from "next-auth/providers/facebook";
 import LineProvider from "next-auth/providers/line";
 import { queryOne } from "@/lib/db";
 
+const providers: any[] = [];
+
+if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+  providers.push(GoogleProvider({
+    clientId: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  }));
+}
+
+if (process.env.FACEBOOK_CLIENT_ID && process.env.FACEBOOK_CLIENT_SECRET) {
+  providers.push(FacebookProvider({
+    clientId: process.env.FACEBOOK_CLIENT_ID,
+    clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+  }));
+}
+
+if (process.env.LINE_CLIENT_ID && process.env.LINE_CLIENT_SECRET) {
+  providers.push(LineProvider({
+    clientId: process.env.LINE_CLIENT_ID,
+    clientSecret: process.env.LINE_CLIENT_SECRET,
+  }));
+}
+
 export const authOptions: AuthOptions = {
-  providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    }),
-    FacebookProvider({
-      clientId: process.env.FACEBOOK_CLIENT_ID!,
-      clientSecret: process.env.FACEBOOK_CLIENT_SECRET!,
-    }),
-    LineProvider({
-      clientId: process.env.LINE_CLIENT_ID!,
-      clientSecret: process.env.LINE_CLIENT_SECRET!,
-    }),
-  ],
+  providers,
 
   callbacks: {
     async signIn({ user }) {
