@@ -5,7 +5,7 @@ const publicPaths = [
   "/", "/landing",
   "/auth/signin", "/auth/signup", "/auth/register-school",
   "/auth/oauth-complete", "/auth/forgot-password", "/auth/reset-password",
-  "/api/auth/login", "/api/auth/register-school",
+  "/api/auth/login", "/api/auth/oauth-token", "/api/auth/register-school",
   "/api/auth/forgot-password", "/api/auth/reset-password",
   "/api/public", "/api/test-db",
 ];
