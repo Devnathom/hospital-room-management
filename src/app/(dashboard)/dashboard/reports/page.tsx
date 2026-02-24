@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { FileText, Loader2, Printer } from "lucide-react";
 import ThaiDatePicker from "@/components/ThaiDatePicker";
 import { formatThaiDate } from "@/lib/thai-date";
+import { generateAndOpenPdf } from "@/lib/pdf-client";
 
 const statusLabels: Record<string, string> = {
   in_room: "อยู่ในห้อง",
@@ -37,20 +38,13 @@ export default function ReportsPage() {
   const openPDF = async () => {
     setExporting(true);
     try {
-      const res = await fetch("/api/reports/pdf", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ dateFrom, dateTo }),
+      await generateAndOpenPdf({
+        visits,
+        dateFrom,
+        dateTo,
+        schoolName: user?.schoolName || "โรงเรียน",
+        staffName: user?.fullName || user?.email || "",
       });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        alert(err.error || "เกิดข้อผิดพลาดในการสร้าง PDF");
-        return;
-      }
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      window.open(url, "_blank");
-      setTimeout(() => URL.revokeObjectURL(url), 30000);
     } catch (err) {
       console.error(err);
       alert("เกิดข้อผิดพลาดในการสร้าง PDF");
