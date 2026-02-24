@@ -9,7 +9,6 @@ export interface AuthUser {
   role: "super_admin" | "school_admin" | "staff" | "nurse";
   schoolId: number | null;
   fullName: string;
-  schoolName: string | null;
 }
 
 export function useAuth() {
